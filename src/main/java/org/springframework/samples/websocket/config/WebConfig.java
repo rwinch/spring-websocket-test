@@ -8,8 +8,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.samples.websocket.echo.EchoWebSocketHandler;
 import org.springframework.samples.websocket.echo.sockjs.EchoSockJsHandler;
+import org.springframework.samples.websocket.echo.stomp.EchoStompHandler;
 import org.springframework.sockjs.server.support.DefaultSockJsService;
 import org.springframework.sockjs.server.support.SockJsHttpRequestHandler;
+import org.springframework.stomp.StompHandler;
+import org.springframework.stomp.server.StompSockJsHttpRequestHandler;
+import org.springframework.stomp.support.SimpleStompHandlerMapping;
 import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -26,9 +30,21 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
 
 	@Bean
+	public SimpleStompHandlerMapping stompHandlerMapping() {
+
+		Map<String, StompHandler> urlMap = new HashMap<String, StompHandler>();
+		urlMap.put("/topic/test", new EchoStompHandler());
+
+		SimpleStompHandlerMapping hm = new SimpleStompHandlerMapping();
+		hm.setUrlMap(urlMap);
+		return hm;
+	}
+
+	@Bean
 	public SimpleUrlHandlerMapping handlerMapping() {
 
 		Map<String, Object> urlMap = new HashMap<String, Object>();
+		urlMap.put(stompSockJsRequestHandler().getPattern(), stompSockJsRequestHandler());
 		urlMap.put(sockJsRequestHandler().getPattern(), sockJsRequestHandler());
 		urlMap.put("/echoWebSocket", webSocketHttpRequestHandler());
 
@@ -37,6 +53,13 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 		hm.setUrlMap(urlMap);
 
 		return hm;
+	}
+
+	// STOMP over SockJS HTTP request handler
+
+	@Bean
+	public StompSockJsHttpRequestHandler stompSockJsRequestHandler() {
+		return new StompSockJsHttpRequestHandler("/echoStompSockJS", sockJsService());
 	}
 
 	// SockJS HTTP request handler

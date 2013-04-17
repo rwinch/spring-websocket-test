@@ -7,7 +7,7 @@
 	<version>1.0.0-SNAPSHOT</version>
 
 	<properties>
-		<org.springframework-version>4.0.0.BUILD-SNAPSHOT</org.springframework-version>
+		<org.springframework-version>4.0.0.WEBSOCKET-STOMP-SNAPSHOT</org.springframework-version>
 		<tomcat-version>8.0-SNAPSHOT</tomcat-version>
 	</properties>
 
@@ -36,6 +36,12 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-websocket</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		<!-- TODO: temporarily required for STOMP -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
 			<version>${org.springframework-version}</version>
 		</dependency>
 		 
@@ -124,6 +130,12 @@
 	</dependencies>
 
 	<repositories>
+		<repository>
+			<id>spring-snapshots</id>
+			<url>http://repo.springsource.org/snapshot</url>
+			<snapshots><enabled>true</enabled></snapshots>
+			<releases><enabled>false</enabled></releases>
+		</repository>
 		<repository>
 			<id>tomcat-snapshots</id>
 			<url>https://repository.apache.org/content/repositories/snapshots</url>
